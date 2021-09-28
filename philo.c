@@ -12,37 +12,51 @@
 
 #include "philo.h"
 
-void ft_error(void)
+void rev_info_nbrs(t_info *info);
 {
-	ft_putstr_fd("Philosophers usage: \n\n", 1);
-	ft_putstr_fd("You have to pass 4 or 5 five arguments to this program \n\n", 1);
-	ft_putstr_fd("[philosophers_numbers] [time_to_die] [time_to_eat] [time_to_sleep] \n\n", 1);
-	ft_putstr_fd("and an optional 5th argument -->  [number_of_times_each_philosopher_should_eat]\n\n", 1);
-	exit(-1);
+	if (info[0]->n_philo == 0 || info[0]->t_die == 0 || \
+		info[0]->t_eat == 0 || info[0]->t_sleep == 0 || \
+		info[0]->n_eats == 0 )
+	{
+		free(info);
+		ft_error();
+	}
+	if (info[0]->n_philos > MX_PHIL)
+	{
+		free(info);
+		ft_error();
+	}
 }
 
-int	ft_str_is_numeric(char *str)
+t_info *create_info_table(char **argv)
 {
-	int	a;
-	int	b;
-
-	a = 0;
-	b = 1;
-	while (str[a] != '\0')
-	{
-		if (str[0] == '+')
-			a++;
-		if (str[a] >= '0' && str[a] <= '9')
-			b = b * 1;
-		if (str[a] < '0' || str[a] > '9')
-			b = 0;
-		a++;
-	}
-	return (b);
+	t_info *info;
+	int	i;
+	
+	i = 1;
+	info = malloc(sizeof(t_info));
+	if (!info)
+		ft_error2();
+	info[0].n_philo = ft_atoi(argv[i])
+	i++;
+	info[0].t_die = ft_atoi(argv[i])
+	i++;
+	info[0].t_eat = ft_atoi(argv[i])
+	i++;
+	info[0].t_sleep = ft_atoi(argv[i])
+	i++;
+	if (argv[i])
+		info[0].n_eats = ft_atoi(argv[i])
+	else
+		info[0].n_eats = -1;
+	rev_info_nbrs(info);
+	initialize_forks_array(info); //////////////////////////// me he quedado aquí
+	return(info);
 }
 
 int main(int argc, char **argv)
 {
+	t_info *info;
 	int i;
 
 	i = 1;
@@ -56,5 +70,6 @@ int main(int argc, char **argv)
 				ft_error();
 			i++;
 		}
+		info = create_info_table(argv);
 	}
 }

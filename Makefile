@@ -24,7 +24,7 @@ CC		= gcc
 all: $(NAME)
 
 $(NAME): $(OBJS) philo.h
-		$(CC) $(CFLAGS) $(OBJS) -o $(NAME) 
+		$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -lpthread
 $(OBJS): $(SRCS)
 		$(CC) $(CFLAGS) -c $(SRCS)
 
