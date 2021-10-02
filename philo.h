@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/09/26 16:38:19 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/02 18:37:44 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <stdlib.h>
+# include <limits.h>
 # define MX_PHIL 200
 typedef struct s_info
 {
@@ -33,10 +34,11 @@ typedef struct s_philo
 {
     int status;
     int n_id;
-    int l_fork;
-    int r_fork;
+    pthread_mutex_t *l_fork;
+    pthread_mutex_t *r_fork;
     t_info *prg;
     pthread_mutex_t *m_f;
+    pthread_t   t_ph;
 }   t_philo;
 
 /*///////////PARSER_UTILS */
@@ -52,4 +54,5 @@ void    ft_error2(void);
 //////// UTILS /////////
 void    ft_putstr_fd(char *s, int fd);
 int     ft_atoi(const char *str);
+int     ft_isdigt(int c);
 #endif

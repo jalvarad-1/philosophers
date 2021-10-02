@@ -6,7 +6,7 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/26 12:26:18 by jalvarad          #+#    #+#              #
-#    Updated: 2021/09/26 16:39:26 by jalvarad         ###   ########.fr        #
+#    Updated: 2021/10/02 18:40:52 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,9 @@ NAME	= philo
 CFLAGS	= -Wall -Werror -Wextra #-fsanitize=address
 
 SRCS	= philo.c \
-			utils.c
+			utils.c \
+			error_management.c \
+			parser_utils.c
 
 OBJS	= $(SRCS:.c=.o)
 
