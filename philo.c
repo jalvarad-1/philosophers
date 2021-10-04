@@ -102,28 +102,67 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 		i++;
 	}
 }
-
+/*Esta funcion solo sirve para hacer pruebas basicas sobre los hilos,
+posiblemente la quitaré*/
 void	*hunger_games(void *th)
 {
-	t_philo	ph;
+	t_philo	*ph;
 
-	ph = *(t_philo *)th;
-	printf("lock -> %d\n",pthread_mutex_lock(&ph.prg->m_prnt));
-	printf("puta %d\n", ph.n_id);
-	printf("unlock -> %d\n",pthread_mutex_unlock(&ph.prg->m_prnt));
-	if (ph.n_id == 1)
+	ph = (t_philo *)th;
+	printf("lock -> %d\n",pthread_mutex_lock(&ph->prg->m_prnt));
+	printf("puta %d\n", ph->n_id);
+	printf("unlock -> %d\n",pthread_mutex_unlock(&ph->prg->m_prnt));
+	if (ph.prg->n_philo == 1)
+		ft_error2();      ////////////////////liberar todo lo previamente reservado
+	else if (ph.prg->n_philo%2 == 0)
 	{
-		pthread_mutex_lock(ph.l_fork);
-		ph.prg->forks[ph.prg->n_philo - 1] = 1;
-		pthread_mutex_unlock(ph.l_fork);
+		if (ph.n_id%2 == 0)
+		{
+			go_routine(ph);
+		}
+		else if (ph.n_id%2 == 1)
+		{
+			go_think(ph);
+		}
+	}
+	else if (ph.prg->n_philo%2 == 1)
+	{
+
+	}
+	if (ph->n_id == 1)
+	{
+		pthread_mutex_lock(ph->l_fork);
+		ph->prg->forks[ph->prg->n_philo - 1] = 1;
+		ph->status = 7;
+		pthread_mutex_unlock(ph->l_fork);
 	}
 	else
 	{
-		pthread_mutex_lock(ph.l_fork);
-		ph.prg->forks[ph.n_id - 2] = 1;
-		pthread_mutex_unlock(ph.l_fork);
+		pthread_mutex_lock(ph->l_fork);
+		ph->prg->forks[ph->n_id - 2] = 1;
+		pthread_mutex_unlock(ph->l_fork);
 	}
 	return (0);
+}
+
+/* Dado que hacer una funcion que valorara hilo por hilo si cumple las
+variables mas basicas condicionales del programa (si el n_philos es par o
+impar) es muy ineficiente he creado dos funciones para los 2 posibles casos, y
+en el los condicionales del bucle ya valoro si se puede entrar o no en el bucle
+con la funcion adecuada */
+
+void	*even_routine(void *th)
+{
+	t_philo	*ph;
+
+	ph = (t_philo *)th;
+}
+
+void	*odd_routine(void *th)
+{
+	t_philo	*ph;
+
+	ph = (t_philo *)th;
 }
 
 void	init_all_the_program(t_info *info)
@@ -139,10 +178,16 @@ void	init_all_the_program(t_info *info)
 	init_m_forks(info, thinkers, m_forks);
 	i = 0;
 	printf("mutex creado %d\n", pthread_mutex_init(&info->m_prnt, NULL));
-	while (i < info->n_philo)
+	while (info->n_philo%2 == 0 && i < info->n_philo)
 	{
 		pthread_create(&thinkers[i].t_ph, NULL, hunger_games, &thinkers[i]);
-		usleep(100);
+		usleep(50);
+		i++;
+	}
+	while (info->n_philo%2 == 1 && i < info->n_philo)
+	{
+		pthread_create(&thinkers[i].t_ph, NULL, hunger_games, &thinkers[i]);
+		usleep(50);
 		i++;
 	}
 	i = 0;
@@ -151,6 +196,7 @@ void	init_all_the_program(t_info *info)
 		pthread_join(thinkers[i].t_ph, NULL);
 		i++;
 	}
+	printf("prueba 2:   -> thinker1 %d\n", thinkers[0].status);
 }
 
 int main(int argc, char **argv)
@@ -178,4 +224,5 @@ int main(int argc, char **argv)
 			i++;
 		}
 	}
+	printf("prueba : %d, %d\n", 5%2, 102%2);
 }
