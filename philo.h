@@ -21,12 +21,13 @@
 # define MX_PHIL 200
 typedef struct s_info
 {
-	int n_philo;
+    int n_philo;
     int t_die;
     int t_eat;
 	int t_sleep;
     int n_eats;
     int *forks; //// nbr de tenedores     1 = está ocupado   0 = está libre
+    int time_start;
     pthread_mutex_t	m_prnt; /// mutex to print
 }	t_info;
 

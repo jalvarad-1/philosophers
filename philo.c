@@ -102,17 +102,20 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 		i++;
 	}
 }
+
 /*Esta funcion solo sirve para hacer pruebas basicas sobre los hilos,
 posiblemente la quitaré*/
+
 void	*hunger_games(void *th)
 {
 	t_philo	*ph;
 
 	ph = (t_philo *)th;
 	printf("lock -> %d\n",pthread_mutex_lock(&ph->prg->m_prnt));
-	printf("puta %d\n", ph->n_id);
+	printf("philo %d\n", ph->n_id);
+	sleep(2);
 	printf("unlock -> %d\n",pthread_mutex_unlock(&ph->prg->m_prnt));
-	if (ph.prg->n_philo == 1)
+	/*if (ph.prg->n_philo == 1)
 		ft_error2();      ////////////////////liberar todo lo previamente reservado
 	else if (ph.prg->n_philo%2 == 0)
 	{
@@ -141,8 +144,13 @@ void	*hunger_games(void *th)
 		pthread_mutex_lock(ph->l_fork);
 		ph->prg->forks[ph->n_id - 2] = 1;
 		pthread_mutex_unlock(ph->l_fork);
-	}
+	}*/
 	return (0);
+}
+
+void	routine(t_philo *ph)
+{
+
 }
 
 /* Dado que hacer una funcion que valorara hilo por hilo si cumple las
@@ -151,14 +159,23 @@ impar) es muy ineficiente he creado dos funciones para los 2 posibles casos, y
 en el los condicionales del bucle ya valoro si se puede entrar o no en el bucle
 con la funcion adecuada */
 
-void	*even_routine(void *th)
+void	*n_ph_even_routine(void *th)
 {
 	t_philo	*ph;
 
 	ph = (t_philo *)th;
+	if (ph->n_id%2 == 0)
+	{
+		routine(ph);
+	}
+	else
+	{
+		usleep(50);
+		routine(ph);
+	}
 }
 
-void	*odd_routine(void *th)
+void	*n_ph_odd_routine(void *th)
 {
 	t_philo	*ph;
 
@@ -180,8 +197,12 @@ void	init_all_the_program(t_info *info)
 	printf("mutex creado %d\n", pthread_mutex_init(&info->m_prnt, NULL));
 	while (info->n_philo%2 == 0 && i < info->n_philo)
 	{
+		//if(thinkers[i].n_id%2 == 0)
+		//{
+		
 		pthread_create(&thinkers[i].t_ph, NULL, hunger_games, &thinkers[i]);
-		usleep(50);
+		//}
+		//usleep(50);
 		i++;
 	}
 	while (info->n_philo%2 == 1 && i < info->n_philo)
