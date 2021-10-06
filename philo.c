@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/03 17:05:08 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/06 17:46:03 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,8 +150,31 @@ void	*hunger_games(void *th)
 
 void	routine(t_philo *ph)
 {
-
+	while (1)
+	{
+		if(ph->n_id == 1)
+		{
+			pthread_mutex_lock(ph->l_fork);
+			ph->prg->forks[ph->prg->n_philo - 1] = 1;
+			print_takefork(ph);
+			
+		}
+		else
+		{
+			pthread_mutex_lock(ph->l_fork);
+			ph->prg->forks[ph->n_id - 2] = 1;
+			print_takefork(ph);
+		}
+		pthread_mutex_lock(ph->r_fork);
+		if(ph->n_id == 1)
+			ph->prg->forks[ph->prg->n_philo - 1] = 1;
+		else
+			ph->prg->forks[ph->n_id - 2] = 1;
+		print_takefork(ph);
+		pthread_mutex_unock(ph->r_fork);
+	}
 }
+
 
 /* Dado que hacer una funcion que valorara hilo por hilo si cumple las
 variables mas basicas condicionales del programa (si el n_philos es par o
@@ -197,18 +220,13 @@ void	init_all_the_program(t_info *info)
 	printf("mutex creado %d\n", pthread_mutex_init(&info->m_prnt, NULL));
 	while (info->n_philo%2 == 0 && i < info->n_philo)
 	{
-		//if(thinkers[i].n_id%2 == 0)
-		//{
-		
 		pthread_create(&thinkers[i].t_ph, NULL, hunger_games, &thinkers[i]);
-		//}
-		//usleep(50);
 		i++;
 	}
 	while (info->n_philo%2 == 1 && i < info->n_philo)
 	{
 		pthread_create(&thinkers[i].t_ph, NULL, hunger_games, &thinkers[i]);
-		usleep(50);
+		//usleep(50);
 		i++;
 	}
 	i = 0;

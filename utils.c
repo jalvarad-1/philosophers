@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:39 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/02 12:32:39 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/06 16:03:21 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,14 @@ int	ft_atoi(const char *str)
 			return (0);
 	}
 	return (num * sg);
+}
+
+/*Devuelve el tiempo en milisegundos*/
+int	ft_get_time()
+{
+	struct timeval tp;
+
+	if (gettimeofday(&tp, NULL) == -1)
+		ft_error2();
+	return((tp.tv_sec * 1000) + (tp.tv_usec / 1000));
 }

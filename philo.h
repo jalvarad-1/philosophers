@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/03 16:50:28 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/06 16:40:47 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,18 @@ typedef struct s_info
 	int t_sleep;
     int n_eats;
     int *forks; //// nbr de tenedores     1 = está ocupado   0 = está libre
-    int time_start;
-    pthread_mutex_t	m_prnt; /// mutex to print
+    pthread_mutex_t	m_prnt_f; /// mutex to print
+    pthread_mutex_t	m_prnt_e;
+    pthread_mutex_t	m_prnt_s;
+    pthread_mutex_t	m_prnt_t;
+    pthread_mutex_t	m_prnt_d;
 }	t_info;
 
 typedef struct s_philo
 {
     int status;
     int n_id;
+    int time;
     pthread_mutex_t *l_fork;
     pthread_mutex_t *r_fork;
     t_info *prg;
@@ -56,4 +60,5 @@ void    ft_error2(void);
 void    ft_putstr_fd(char *s, int fd);
 int     ft_atoi(const char *str);
 int     ft_isdigt(int c);
+int	ft_get_time();
 #endif
