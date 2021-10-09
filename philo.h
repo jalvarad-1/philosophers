@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/06 16:40:47 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/09 15:52:31 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <stdlib.h>
 # include <limits.h>
 # define MX_PHIL 200
+# define RED "\x1b[31m"
+# define YELLOW ""
 typedef struct s_info
 {
     int n_philo;
@@ -26,6 +28,7 @@ typedef struct s_info
     int t_eat;
 	int t_sleep;
     int n_eats;
+    int turn;
     int *forks; //// nbr de tenedores     1 = está ocupado   0 = está libre
     pthread_mutex_t	m_prnt_f; /// mutex to print
     pthread_mutex_t	m_prnt_e;
@@ -38,7 +41,8 @@ typedef struct s_philo
 {
     int status;
     int n_id;
-    int time;
+    int time_init;
+    int time_now;
     pthread_mutex_t *l_fork;
     pthread_mutex_t *r_fork;
     t_info *prg;
@@ -60,5 +64,12 @@ void    ft_error2(void);
 void    ft_putstr_fd(char *s, int fd);
 int     ft_atoi(const char *str);
 int     ft_isdigt(int c);
-int	ft_get_time();
+int     ft_get_time();
+
+/////// PRINTS /////////
+void	print_takefork(t_philo *ph);
+void	print_eat(t_philo *ph);
+void	print_sleep(t_philo *ph);
+void	print_think(t_philo *ph);
+void	print_die(t_philo *ph);
 #endif

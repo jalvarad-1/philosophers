@@ -6,7 +6,7 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/26 12:26:18 by jalvarad          #+#    #+#              #
-#    Updated: 2021/10/03 17:34:03 by jalvarad         ###   ########.fr        #
+#    Updated: 2021/10/09 13:03:34 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,8 @@ CFLAGS	= -Wall -Werror -Wextra
 SRCS	= philo.c \
 			utils.c \
 			error_management.c \
-			parser_utils.c
+			parser_utils.c \
+			prints.c
 
 OBJS	= $(SRCS:.c=.o)
 
