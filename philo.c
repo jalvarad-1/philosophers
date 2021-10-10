@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/09 17:51:18 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/10 16:54:42 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,8 @@ posiblemente la quitaré*/
 
 void	routine_aux(t_philo *ph)
 {
-	ph->time_now = ft_get_time();
 	print_eat(ph);
-	usleep((ph->prg->t_eat * 1000));
+	ft_usleep((ph->time_now + ph->prg->t_eat));
 	if (ph->n_id == 1)
 	{
 		ph->prg->forks[ph->prg->n_philo - 1] = 0;
@@ -121,74 +120,77 @@ void	routine_aux(t_philo *ph)
 		ph->prg->forks[ph->n_id - 2] = 0;
 		ph->prg->forks[ph->n_id - 1] = 0;
 	}
-	ph->status = 0;
+	ph->status = 2;
 	pthread_mutex_unlock(ph->l_fork);
 	pthread_mutex_unlock(ph->r_fork);
+}
+
+void	ph_sleep(t_philo *ph)
+{
+	print_sleep(ph);
+	ft_usleep((ph->time_now + ph->prg->t_sleep));
+	ph->status = 4;
 }
 
 void	routine(t_philo *ph)
 {
 	while (1)
 	{
-		if(ph->n_id == 1 && ph->prg->turn == 1)
+		if(ph->status != 4 && ph->n_id == 1 && ph->prg->turn == 1)
 		{
 			pthread_mutex_lock(ph->l_fork);
 			ph->prg->forks[ph->prg->n_philo - 1] = 1;
-			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			pthread_mutex_lock(ph->r_fork);
 			ph->prg->forks[0] = 1;
-			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			if (ph->prg->forks[ph->prg->n_philo - 1] == 1 && \
 				ph->prg->forks[0] == 1)
 			{
 				ph->status = 1;
 				routine_aux(ph);
+				ph_sleep(ph);
 			}
 		}
-		else if (ph->n_id %2 == 0 && ph->prg->turn == 0)
+		else if (ph->status != 4 && ph->n_id % 2 == 0 && ph->prg->turn == 0)
 		{
 			pthread_mutex_lock(ph->l_fork);
 			ph->prg->forks[ph->n_id - 2] = 1;
-			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			pthread_mutex_lock(ph->r_fork);
 			ph->prg->forks[ph->n_id - 1] = 1;
-			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			if (ph->prg->forks[ph->n_id - 2] == 1 && \
 				ph->prg->forks[ph->n_id - 1] == 1)
 			{
 				ph->status = 1;
 				routine_aux(ph);
-				//printf("aa->>>> (%d)\n", ph->n_id);
+				ph_sleep(ph);
 			}
 		}
-		else if (ph->n_id %2 == 1 && ph->prg->turn == 1)
+		else if (ph->status != 4 && ph->n_id %2 == 1 && ph->prg->turn == 1)
 		{
-			//printf("aa->>>> (%d)\n", ph->n_id);
-			//exit (-1);
 			pthread_mutex_lock(ph->l_fork);
 			ph->prg->forks[ph->n_id - 2] = 1;
-			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			pthread_mutex_lock(ph->r_fork);
 			ph->prg->forks[ph->n_id - 1] = 1;
-			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			if (ph->prg->forks[ph->n_id - 2] == 1 && \
 				ph->prg->forks[ph->n_id - 1] == 1)
 			{
 				ph->status = 1;
 				routine_aux(ph);
-				//printf("aa->>>> (%d)\n", ph->n_id);
+				ph_sleep(ph);
 			}
 		}
-		
+		else if (ph->status == 4)
+		{
+			ph->status = 0;
+			print_think(ph);
+		}
 	}
 }
-
 
 /* Dado que hacer una funcion que valorara hilo por hilo si cumple las
 variables mas basicas condicionales del programa (si el n_philos es par o
@@ -254,8 +256,8 @@ void	init_all_the_program(t_info *info)
 	///printf("mutex creado %d\n", pthread_mutex_init(&info->m_prnt, NULL));
 	while (info->n_philo%2 == 0 && i < info->n_philo)
 	{
-		printf("--->%d ---- %d \n", i, thinkers[i].n_id);
 		thinkers[i].time_init = ft_get_time();
+		thinkers[i].status = 0;
 		pthread_create(&thinkers[i].t_ph, NULL, nph_evenroutine, &thinkers[i]);
 		i++;
 	}
@@ -288,7 +290,6 @@ void	init_all_the_program(t_info *info)
 		pthread_join(thinkers[i].t_ph, NULL);
 		i++;
 	}
-	
 	printf("prueba 2:   -> thinker1 %d\n", thinkers[0].status);
 }
 
