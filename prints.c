@@ -15,7 +15,6 @@
 void	print_takefork(t_philo *ph)
 {
 	pthread_mutex_lock(&ph->prg->m_prnt_f);
-	ph->time_now = ft_get_time();
 	if ((ph->time_now - ph->last_eat) > ph->prg->t_die)
 	{
 		printf("(%d) Philosopher %d muere \n", ph->time_now - ph->time_init, ph->n_id);
@@ -29,7 +28,6 @@ void	print_takefork(t_philo *ph)
 void	print_eat(t_philo *ph)
 {
 	pthread_mutex_lock(&ph->prg->m_prnt_e);
-	ph->time_now = ft_get_time();
 	ph->last_eat = ph->time_now;
 	if ((ph->time_now - ph->last_eat) > ph->prg->t_die)
 	{
@@ -45,7 +43,6 @@ void	print_eat(t_philo *ph)
 void	print_sleep(t_philo *ph)
 {
 	pthread_mutex_lock(&ph->prg->m_prnt_s);
-	ph->time_now = ft_get_time();
 	if ((ph->time_now - ph->last_eat) > ph->prg->t_die)
 	{
 		printf("(%d) Philosopher %d muere \n", ph->time_now - ph->time_init, ph->n_id);
@@ -59,7 +56,6 @@ void	print_sleep(t_philo *ph)
 void	print_think(t_philo *ph)
 {
     pthread_mutex_lock(&ph->prg->m_prnt_t);
-	ph->time_now = ft_get_time();
 	if ((ph->time_now - ph->last_eat) > ph->prg->t_die)
 	{
 		printf("(%d) Philosopher %d muere \n", ph->time_now - ph->time_init, ph->n_id);
