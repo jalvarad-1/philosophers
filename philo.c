@@ -216,13 +216,13 @@ void	routine(t_philo *ph)
 		}
 		else if (ph->status == 0 && ph->n_id %2 == 1)///// estoy por aquí
 		{
-			pthread_mutex_lock(ph->r_fork);
-			ph->prg->forks[ph->n_id - 1] = 1;
-			ph->status = 5;
-			print_takefork(ph);
 			pthread_mutex_lock(ph->l_fork);
 			ph->prg->forks[ph->n_id - 2] = 1;
 			ph->status = 1;
+			print_takefork(ph);
+			pthread_mutex_lock(ph->r_fork);
+			ph->prg->forks[ph->n_id - 1] = 1;
+			ph->status = 5;
 			print_takefork(ph);
 			if (ph->prg->forks[ph->n_id - 2] == 1 && \
 				ph->prg->forks[ph->n_id - 1] == 1)
@@ -233,13 +233,13 @@ void	routine(t_philo *ph)
 		}
 		else if(ph->status == 0 && ph->n_id == 1)
 		{
-			pthread_mutex_lock(ph->r_fork);
-			ph->status = 5;
-			ph->prg->forks[0] = 1;
-			print_takefork(ph);
 			pthread_mutex_lock(ph->l_fork);
 			ph->prg->forks[ph->prg->n_philo - 1] = 1;
 			ph->status = 1;
+			print_takefork(ph);
+			pthread_mutex_lock(ph->r_fork);
+			ph->status = 5;
+			ph->prg->forks[0] = 1;
 			print_takefork(ph);
 			if (ph->prg->forks[ph->prg->n_philo - 1] == 1 && \
 				ph->prg->forks[0] == 1)
@@ -254,6 +254,7 @@ void	routine(t_philo *ph)
 		{
 			ph->status = 0;
 			print_think(ph);
+			usleep((ph->prg->t_die/6) * 1000);
 		}
 	}
 }
@@ -304,6 +305,7 @@ void	init_all_the_program(t_info *info)
 	t_philo 		*thinkers;
 	pthread_mutex_t *m_forks;
 	int				i;
+//	int				a;
 
 	thinkers = malloc(sizeof(t_philo) * info->n_philo);
 	m_forks = malloc(sizeof(pthread_mutex_t) * info->n_philo);
@@ -311,12 +313,14 @@ void	init_all_the_program(t_info *info)
 		ft_error2();
 	init_m_forks(info, thinkers, m_forks);
 	i = 0;
+//	a = ft_get_time();
 	while (i < info->n_philo)
 	{
 		thinkers[i].time_init = ft_get_time();
 		thinkers[i].last_eat = thinkers[i].time_init;
 		thinkers[i].status = 0;
 		pthread_create(&thinkers[i].t_ph, NULL, nph_evenroutine, &thinkers[i]);
+		usleep(100);
 		i++;
 	}
 	i = 0;

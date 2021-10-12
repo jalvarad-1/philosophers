@@ -58,7 +58,7 @@ void	print_sleep(t_philo *ph)
 
 void	print_think(t_philo *ph)
 {
-	pthread_mutex_lock(&ph->prg->m_prnt_t);
+    pthread_mutex_lock(&ph->prg->m_prnt_t);
 	ph->time_now = ft_get_time();
 	if ((ph->time_now - ph->last_eat) > ph->prg->t_die)
 	{
