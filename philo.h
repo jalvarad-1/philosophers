@@ -31,6 +31,7 @@ typedef struct s_info
     int n_eats;
     int die;
     int *forks; //// nbr de tenedores     1 = está ocupado   0 = está libre
+    int finish;
     pthread_mutex_t	m_prnt_f; /// mutex to print
     pthread_mutex_t	m_prnt_e;
     pthread_mutex_t	m_prnt_s;
@@ -42,11 +43,12 @@ typedef struct s_philo
 {
     int status;   ///// 0 = coge un tenedor --- 1 = está comiendo
     int n_id;     ///// 2 = ha acabado de comer --- 3 = duerme    
-    int time_init;///// 4 = debe pensar  ---- 5 = tiene fork izquierdo
-    int time_now;
-    int last_eat;
+    long int time_init;///// 4 = debe pensar  ---- 5 = tiene fork izquierdo
+    long int time_now;
+    long int last_eat;
     pthread_mutex_t *l_fork;
     pthread_mutex_t *r_fork;
+    //pthread_mutex_t m_print;
     t_info *prg;
     pthread_mutex_t *m_f;
     pthread_t   t_ph;
@@ -66,8 +68,8 @@ void    ft_error2(void);
 void    ft_putstr_fd(char *s, int fd);
 int     ft_atoi(const char *str);
 int     ft_isdigt(int c);
-int     ft_get_time();
-void ft_usleep(int max_time);
+long int     ft_get_time();
+void ft_usleep(long int max_time);
 
 /////// PRINTS /////////
 void	print_takefork(t_philo *ph);

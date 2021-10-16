@@ -102,6 +102,11 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 		thinkers[i].prg = info;
 		i++;
 	}
+	pthread_mutex_init(&info->m_prnt_d, NULL);
+	pthread_mutex_init(&info->m_prnt_e, NULL);
+	pthread_mutex_init(&info->m_prnt_t, NULL);
+	pthread_mutex_init(&info->m_prnt_s, NULL);
+	pthread_mutex_init(&info->m_prnt_f, NULL);
 }
 
 /*Esta funcion solo sirve para hacer pruebas basicas sobre los hilos,
@@ -110,16 +115,16 @@ posiblemente la quitaré*/
 void	routine_aux(t_philo *ph)
 {
 	print_eat(ph);
-	if (ph->n_id == 1)
+	/*if (ph->n_id == 1)
 	{
 		ph->prg->forks[ph->prg->n_philo - 1] = 0;
 		ph->prg->forks[0] = 0;
 	}
 	else
 	{
-		ph->prg->forks[ph->n_id - 2] = 0;
+		//ph->prg->forks[ph->n_id - 2] = 0;
 		ph->prg->forks[ph->n_id - 1] = 0;
-	}
+	}*/
 	ph->status = 2;
 	ft_usleep((ph->time_now + ph->prg->t_eat));
 	ph->time_now = ph->time_now + ph->prg->t_eat;
@@ -145,13 +150,13 @@ void	routine(t_philo *ph)
 			pthread_mutex_lock(ph->r_fork);
 			ph->time_now = ft_get_time();
 			print_takefork(ph);
-			ph->prg->forks[ph->n_id - 1] = 1;
+			//ph->prg->forks[ph->n_id - 1] = 1;
 			ph->status = 5;
 			pthread_mutex_lock(ph->l_fork);
 			ph->time_now = ft_get_time();
 			print_takefork(ph);
 			ph->status = 1;
-			ph->prg->forks[ph->n_id - 2] = 1;
+			//ph->prg->forks[ph->n_id - 2] = 1;
 			routine_aux(ph);
 			ph_sleep(ph);
 		}
@@ -159,12 +164,12 @@ void	routine(t_philo *ph)
 		{
 			pthread_mutex_lock(ph->l_fork);
 			ph->time_now = ft_get_time();
-			ph->prg->forks[ph->n_id - 2] = 1;
+			//ph->prg->forks[ph->n_id - 2] = 1;
 			ph->status = 1;
 			print_takefork(ph);
 			pthread_mutex_lock(ph->r_fork);
 			ph->time_now = ft_get_time();
-			ph->prg->forks[ph->n_id - 1] = 1;
+			//ph->prg->forks[ph->n_id - 1] = 1;
 			ph->status = 5;
 			print_takefork(ph);
 			routine_aux(ph);
@@ -174,13 +179,13 @@ void	routine(t_philo *ph)
 		{
 			pthread_mutex_lock(ph->l_fork);
 			ph->time_now = ft_get_time();
-			ph->prg->forks[ph->prg->n_philo - 1] = 1;
+			//ph->prg->forks[ph->prg->n_philo - 1] = 1;
 			ph->status = 1;
 			print_takefork(ph);
 			pthread_mutex_lock(ph->r_fork);
 			ph->time_now = ft_get_time();
 			ph->status = 5;
-			ph->prg->forks[0] = 1;
+			//ph->prg->forks[0] = 1;
 			print_takefork(ph);
 			routine_aux(ph);
 			ph_sleep(ph);
@@ -189,7 +194,8 @@ void	routine(t_philo *ph)
 		{
 			ph->status = 0;
 			print_think(ph);
-			usleep((ph->prg->t_die/6) * 1000);
+			//if (ph->n_id %2 == 1)
+				//usleep((ph->prg->die/6) * 1000);
 		}
 	}
 }
@@ -207,11 +213,19 @@ void	*nph_evenroutine(void *th)
 	ph = (t_philo *)th;
 	if (ph->n_id%2 == 0)
 	{
+		while (ph->prg->finish == 0)
+			;
+		ph->time_init = ft_get_time();
+		ph->last_eat = ph->time_init;
 		routine(ph);
 	}
 	else
 	{
-		usleep(100);
+		while (ph->prg->finish == 0)
+			;
+		ph->time_init = ft_get_time();
+		ph->last_eat = ph->time_init;
+		usleep(1000);
 		routine(ph);
 	}
 	return (0);
@@ -240,25 +254,40 @@ void	init_all_the_program(t_info *info)
 	t_philo 		*thinkers;
 	pthread_mutex_t *m_forks;
 	int				i;
-//	int				a;
+	long int		a;
 
 	thinkers = malloc(sizeof(t_philo) * info->n_philo);
 	m_forks = malloc(sizeof(pthread_mutex_t) * info->n_philo);
 	if (!thinkers || !m_forks)
 		ft_error2();
 	init_m_forks(info, thinkers, m_forks);
-	i = 0;
-//	a = ft_get_time();
+	i = 1;
+	a = ft_get_time();
+	info->finish = 0;
 	while (i < info->n_philo)
 	{
-		thinkers[i].time_init = ft_get_time();
+		thinkers[i].time_init = a;//ft_get_time();
 		thinkers[i].last_eat = thinkers[i].time_init;
 		thinkers[i].status = 0;
 		pthread_create(&thinkers[i].t_ph, NULL, nph_evenroutine, &thinkers[i]);
-		usleep(100);
-		i++;
+		//usleep(100);
+		if (i == info->n_philo -1)
+			info->finish = 1;
+		i+= 2;
 	}
+	//usleep(100);
 	i = 0;
+	while (i < info->n_philo)
+	{
+		thinkers[i].time_init = a;//ft_get_time();
+		thinkers[i].last_eat = thinkers[i].time_init;
+		thinkers[i].status = 0;
+		pthread_create(&thinkers[i].t_ph, NULL, nph_evenroutine, &thinkers[i]);
+		if (i == info->n_philo -1)
+			info->finish = 1;
+		i+= 2;
+	}
+	i= 0;
 	while (i < info->n_philo)
 	{
 		pthread_join(thinkers[i].t_ph, NULL);

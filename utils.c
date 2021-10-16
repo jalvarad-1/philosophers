@@ -56,7 +56,7 @@ int	ft_atoi(const char *str)
 }
 
 /*Devuelve el tiempo en milisegundos*/
-int	ft_get_time()
+long int	ft_get_time()
 {
 	struct timeval tp;
 
@@ -65,10 +65,8 @@ int	ft_get_time()
 	return((tp.tv_sec * 1000) + (tp.tv_usec / 1000));
 }
 
-void ft_usleep(int max_time)
+void ft_usleep(long int max_time)
 {
 	while (max_time > ft_get_time())
-	{
-		usleep(1000);
-	}
+		;
 }
