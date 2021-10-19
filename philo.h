@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/12 17:14:03 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/10/16 16:07:10 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_info
     pthread_mutex_t	m_prnt_s;
     pthread_mutex_t	m_prnt_t;
     pthread_mutex_t	m_prnt_d;
+    pthread_mutex_t get_t;
 }	t_info;
 
 typedef struct s_philo
