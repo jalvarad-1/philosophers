@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/19 18:32:29 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/11/06 11:55:19 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void	routine(t_philo *ph)
 {
 	while (1)
 	{
-		if (ph->status == 0 )//&& ph->n_id % 2 == 0)
+		if (ph->status == 0 && ph->n_id % 2 == 0)
 		{
 			pthread_mutex_lock(ph->l_fork);
 			ph->time_now = ft_get_time();
@@ -161,19 +161,14 @@ void	routine(t_philo *ph)
 			routine_aux(ph);
 			ph_sleep(ph);
 		}
-		if (ph->status == 1)
-		{
-			usleep(1000);
-			ph->status = 0;
-		}
 		/*else if (ph->status == 0 && ph->n_id %2 == 1)///// estoy por aquí
 		{
-			pthread_mutex_lock(ph->l_fork);
+			pthread_mutex_lock(ph->r_fork);
 			//ph->time_now = ft_get_time();
 			//ph->prg->forks[ph->n_id - 2] = 1;
 			ph->status = 1;
 			print_takefork(ph);
-			pthread_mutex_lock(ph->r_fork);
+			pthread_mutex_lock(ph->l_fork);
 			//ph->time_now = ft_get_time();
 			//ph->prg->forks[ph->n_id - 1] = 1;
 			ph->status = 5;
@@ -196,12 +191,12 @@ void	routine(t_philo *ph)
 			routine_aux(ph);
 			ph_sleep(ph);
 		}*/
-		if (ph->status == 4)
+		else if (ph->status == 4)
 		{
 			ph->status = 0;
 			print_think(ph);
-			//if (ph->last_eat + ph->prg->t_eat < ph->last_eat + ph->prg->t_die)
-			//	usleep(1000);
+			if (ph->last_eat + ph->prg->t_eat < ph->last_eat + ph->prg->t_die)
+				usleep(1000);
 		}
 	}
 }
@@ -219,8 +214,8 @@ void	*nph_evenroutine(void *th)
 	ph = (t_philo *)th;
 	if (ph->n_id%2 == 0)
 	{
-		//while (ph->prg->finish == 0)
-		//	;
+		while (ph->prg->finish == 0)
+			;
 		//ph->time_init = ft_get_time();
 		//ph->last_eat = ph->time_init;
 		routine(ph);
@@ -232,8 +227,7 @@ void	*nph_evenroutine(void *th)
 		//ph->last_eat = ph->time_init;
 		while (ph->prg->finish == 0)
 			;
-		ph->status = 1;
-		usleep(1000);
+		usleep(100);
 		routine(ph);
 	}
 	return (0);
@@ -278,8 +272,8 @@ void	init_all_the_program(t_info *info)
 		thinkers[i].status = 0;
 		pthread_create(&thinkers[i].t_ph, NULL, nph_evenroutine, &thinkers[i]);
 		//usleep(100);
-		if (i == info->n_philo - 1)
-			info->finish = 1;
+		//if (i == info->n_philo - 1)
+		//	info->finish = 1;
 		i++;
 	}
 	//usleep(100);
