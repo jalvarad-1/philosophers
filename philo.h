@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/16 16:07:10 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/09 12:54:08 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,25 +31,19 @@ typedef struct s_info
     int n_eats;
     int die;
     int *forks; //// nbr de tenedores     1 = está ocupado   0 = está libre
-    int finish;
-    pthread_mutex_t	m_prnt_f; /// mutex to print
-    pthread_mutex_t	m_prnt_e;
-    pthread_mutex_t	m_prnt_s;
-    pthread_mutex_t	m_prnt_t;
-    pthread_mutex_t	m_prnt_d;
-    pthread_mutex_t get_t;
+    pthread_mutex_t	m_print; /// mutex to print
 }	t_info;
 
 typedef struct s_philo
 {
     int status;   ///// 0 = coge un tenedor --- 1 = está comiendo
     int n_id;     ///// 2 = ha acabado de comer --- 3 = duerme    
+    int eat_counts;
     long int time_init;///// 4 = debe pensar  ---- 5 = tiene fork izquierdo
     long int time_now;
     long int last_eat;
     pthread_mutex_t *l_fork;
     pthread_mutex_t *r_fork;
-    //pthread_mutex_t m_print;
     t_info *prg;
     pthread_mutex_t *m_f;
     pthread_t   t_ph;
