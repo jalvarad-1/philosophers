@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/03 17:03:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/10/03 17:04:38 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/16 18:59:04 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void ft_error(void)
 {
 	ft_putstr_fd("Philosophers usage: \n\n", 1);
-	ft_putstr_fd("You have to pass 4 or 5 five arguments to this program \n\n", 1);
+	ft_putstr_fd("You have to pass 4 or 5 five arguments (numbers > 0) to this program \n\n", 1);
 	ft_putstr_fd("[philosophers_numbers] [time_to_die] [time_to_eat] [time_to_sleep] \n\n", 1);
 	ft_putstr_fd("and an optional 5th argument -->  [number_of_times_each_philosopher_should_eat]\n\n", 1);
 	exit(-1);

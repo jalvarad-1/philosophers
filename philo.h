@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/09 12:54:08 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/16 18:55:39 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,8 @@
 # include <sys/time.h>
 # include <stdlib.h>
 # include <limits.h>
-# define MX_PHIL 200
-# define RED "\x1b[31m"
-# define YELLOW ""
+# define MAX_PH 200
+
 typedef struct s_info
 {
     int n_philo;
@@ -29,7 +28,6 @@ typedef struct s_info
     int t_eat;
 	int t_sleep;
     int n_eats;
-    int die;
     int *forks; //// nbr de tenedores     1 = está ocupado   0 = está libre
     pthread_mutex_t	m_print; /// mutex to print
 }	t_info;
@@ -67,9 +65,5 @@ long int     ft_get_time();
 void ft_usleep(long int max_time);
 
 /////// PRINTS /////////
-void	print_takefork(t_philo *ph);
-void	print_eat(t_philo *ph);
-void	print_sleep(t_philo *ph);
-void	print_think(t_philo *ph);
-void	print_die(t_philo *ph);
+void	print_actions(t_philo *ph, char *actions);
 #endif

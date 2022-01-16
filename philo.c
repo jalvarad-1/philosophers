@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/09 12:54:54 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/16 19:01:11 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void	rev_info_nbrs(t_info *info)
 {
-	if (info[0].n_philo == 0 || info[0].t_die == 0 || \
-		info[0].t_eat == 0 || info[0].t_sleep == 0 || \
-		info[0].n_eats == 0 )
+	if (info[0].n_philo <= 0 || info[0].t_die <= 0 || \
+		info[0].t_eat <= 0 || info[0].t_sleep <= 0 || \
+		info[0].n_eats <= 0 )
 	{
 		free(info);
 		ft_error();
 	}
-	if (info[0].n_philo > MX_PHIL)
+	if (info[0].n_philo > MAX_PH)
 	{
 		free(info);
 		ft_error();
@@ -65,7 +65,7 @@ t_info	*create_info_table(char **argv)
 	if (argv[i])
 		info[0].n_eats = ft_atoi(argv[i]);
 	else
-		info[0].n_eats = -1;
+		info[0].n_eats = 0;
 	rev_info_nbrs(info);
 	info[0].somebody_is_die = 0;
 	info[0].forks = initialize_forks_array(info[0].n_philo);
@@ -105,59 +105,20 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 	pthread_mutex_init(&info->m_print, NULL);
 }
 
-/*Esta funcion solo sirve para hacer pruebas basicas sobre los hilos,
-posiblemente la quitaré*/
-
-void	routine_aux(t_philo *ph)
-{
-	print_eat(ph);
-	/*if (ph->n_id == 1)
-	{
-		ph->prg->forks[ph->prg->n_philo - 1] = 0;
-		ph->prg->forks[0] = 0;
-	}
-	else
-	{
-		//ph->prg->forks[ph->n_id - 2] = 0;
-		ph->prg->forks[ph->n_id - 1] = 0;
-	}*/
-	ph->status = 2;
-	ft_usleep((ph->time_now + (ph->prg->t_eat * 1000)));
-	//ph->time_now = ph->time_now + ph->prg->t_eat;
-	pthread_mutex_unlock(ph->l_fork);
-	pthread_mutex_unlock(ph->r_fork);
-}
-
-void	ph_sleep(t_philo *ph)
-{
-	print_sleep(ph);
-	ft_usleep(ph->time_now + (ph->prg->t_sleep * 1000));
-	//ph->time_now = ph->time_now + ph->prg->t_sleep;
-	ph->status = 4;
-}
-
-
 void	to_do_list(t_philo *ph)
 {
 	pthread_mutex_lock(ph->r_fork);
-	print_takefork(ph);
+	print_actions(ph, "(%lu) Philosopher %d has taken a fork.\n");
 	pthread_mutex_lock(ph->l_fork);
-	print_takefork(ph);
-	print_eat(ph);
+	print_actions(ph, "(%lu) Philosopher %d has taken a fork.\n");
+	print_actions(ph, "(%lu) Philosopher %d is eating.\n");
 	ph->last_eat = ft_get_time();
 	ft_usleep(ph->prg->t_eat);
-	ph_sleep(ph);
-	if (ph->status == 1)
-		{
-			usleep(1000);
-			ph->status = 0;
-		}
-		if (ph->status == 4)
-		{
-			ph->status = 0;
-			print_think(ph);
-		}
-	}
+	pthread_mutex_unlock(ph->r_fork);
+	pthread_mutex_unlock(ph->l_fork);
+	print_actions(ph, "(%lu) Philosopher %d is sleeping.\n");
+	ft_usleep(ph->prg->t_sleep);
+	print_actions(ph, "(%lu) Philosopher %d is thinking.\n");
 }
 
 /* Dado que hacer una funcion que valorara hilo por hilo si cumple las
@@ -173,27 +134,43 @@ void	*ph_routine(void *th)
 	ph = (t_philo *)th;
 	if (ph->n_id % 2)
 		usleep(100);
-	while(1)
+	while(!ph->prg->somebody_is_die)
 		to_do_list(ph);
 	return (NULL);
 }
 
-int rev_all_thinkers(t_philo *thinkers, t_info *info, int a)
+int		is_alive(t_philo *ph)
+{
+	if (ft_get_time() > ph->last_eat + ph->prg->t_die)
+	{
+		print_actions(ph, "(%lu) Philosopher %d died.\n");
+		ph->prg->somebody_is_die = 1;
+		return (0);
+	}
+	return (1);
+}
+
+void	finisher_checker(t_philo *ph, int n_philos)
 {
 	int i;
 
-	i = 0;
-	while (i < info->n_philo)
+	while(!ph->prg->somebody_is_die)
 	{
-		if (thinkers[i].n_id%2 == a && thinkers[i].status != 1)
-			break ;
-		i++;
+		i = 0;
+		while(i < n_philos)
+		{
+			if (!is_alive(&ph[i]))
+				break;
+			if (ph->prg->n_eats > 0)
+			{
+				///comprobación del numero de comidas de cada philo
+			}
+			i++;
+		}
 	}
-	if (i == info->n_philo)
-		return (1);
-	else
-		return (0);
-
+	i = -1;
+	while (++i < n_philos)
+		pthread_join(ph[i].t_ph, NULL);
 }
 
 void	init_all_the_program(t_info *info)
@@ -217,12 +194,7 @@ void	init_all_the_program(t_info *info)
 		pthread_create(&thinkers[i].t_ph, NULL, ph_routine, &thinkers[i]);
 		i++;
 	}
-	i = 0;
-	while (i < info->n_philo)
-	{
-		pthread_join(thinkers[i].t_ph, NULL);
-		i++;
-	}
+	finisher_checker(thinkers, info->n_philo);
 }
 
 int main(int argc, char **argv)
