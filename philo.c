@@ -16,7 +16,7 @@ void	rev_info_nbrs(t_info *info)
 {
 	if (info[0].n_philo <= 0 || info[0].t_die <= 0 || \
 		info[0].t_eat <= 0 || info[0].t_sleep <= 0 || \
-		info[0].n_eats <= 0 )
+		info[0].n_eats < 0 )
 	{
 		free(info);
 		ft_error();
@@ -63,7 +63,14 @@ t_info	*create_info_table(char **argv)
 	info[0].t_sleep = ft_atoi(argv[i]);
 	i++;
 	if (argv[i])
+	{
 		info[0].n_eats = ft_atoi(argv[i]);
+		if (info[0].n_eats == 0)
+		{
+			free(info);
+			ft_error();
+		}
+	}
 	else
 		info[0].n_eats = 0;
 	rev_info_nbrs(info);
@@ -94,6 +101,7 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 	thinkers[i].l_fork = &m_forks[info->n_philo - 1];
 	thinkers[i].r_fork = &m_forks[i];
 	thinkers[i].prg = info;
+	thinkers[i].eat_counts = 0;
 	i++;
 	while (i < info->n_philo)
 	{
@@ -116,6 +124,9 @@ void	to_do_list(t_philo *ph)
 	ft_usleep(ph->prg->t_eat);
 	pthread_mutex_unlock(ph->r_fork);
 	pthread_mutex_unlock(ph->l_fork);
+	ph->eat_counts++;
+	if (ph->eat_counts == ph->prg->n_eats)
+		return ;
 	print_actions(ph, "(%lu) Philosopher %d is sleeping.\n");
 	ft_usleep(ph->prg->t_sleep);
 	print_actions(ph, "(%lu) Philosopher %d is thinking.\n");
@@ -132,10 +143,18 @@ void	*ph_routine(void *th)
 	t_philo	*ph;
 
 	ph = (t_philo *)th;
+	ph->full = 0;
 	if (ph->n_id % 2)
 		usleep(100);
 	while(!ph->prg->somebody_is_die)
+	{
+		if (ph->prg->n_eats > 0 && ph->prg->n_eats == ph->eat_counts)
+		{
+			ph->full++;
+			break ;
+		}
 		to_do_list(ph);
+	}
 	return (NULL);
 }
 
@@ -153,17 +172,24 @@ int		is_alive(t_philo *ph)
 void	finisher_checker(t_philo *ph, int n_philos)
 {
 	int i;
+	int complete_eats;
 
 	while(!ph->prg->somebody_is_die)
 	{
 		i = 0;
+		complete_eats = 0;
 		while(i < n_philos)
 		{
 			if (!is_alive(&ph[i]))
 				break;
-			if (ph->prg->n_eats > 0)
+			if (ph[i].full)
 			{
-				///comprobación del numero de comidas de cada philo
+				complete_eats++;
+				if (complete_eats == ph->prg->n_philo)
+				{
+					ph->prg->somebody_is_die = 1;
+					break;
+				}
 			}
 			i++;
 		}

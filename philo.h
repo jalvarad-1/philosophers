@@ -36,7 +36,8 @@ typedef struct s_philo
 {
     int status;   ///// 0 = coge un tenedor --- 1 = está comiendo
     int n_id;     ///// 2 = ha acabado de comer --- 3 = duerme    
-    int eat_counts;
+    int full;
+    long int eat_counts;
     long int time_init;///// 4 = debe pensar  ---- 5 = tiene fork izquierdo
     long int time_now;
     long int last_eat;
