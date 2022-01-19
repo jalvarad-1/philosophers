@@ -150,7 +150,7 @@ void	*ph_routine(void *th)
 	{
 		if (ph->prg->n_eats > 0 && ph->prg->n_eats == ph->eat_counts)
 		{
-			ph->full++;
+			ph->full = 1;
 			break ;
 		}
 		to_do_list(ph);
@@ -169,6 +169,25 @@ int		is_alive(t_philo *ph)
 	return (1);
 }
 
+void	join_and_destroy(t_philo *ph, int n_philos)
+{
+	int	i;
+
+	i = 0;
+	while (i < n_philos)
+	{
+		pthread_join(ph[i].t_ph, NULL);
+		i++;
+	}
+	i = 0;
+	while (i < n_philos)
+	{
+		pthread_mutex_destroy(&ph[0].m_f[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&ph[0].prg->m_print);
+	free(ph[0].m_f);
+}
 void	finisher_checker(t_philo *ph, int n_philos)
 {
 	int i;
@@ -180,7 +199,7 @@ void	finisher_checker(t_philo *ph, int n_philos)
 		complete_eats = 0;
 		while(i < n_philos)
 		{
-			if (!is_alive(&ph[i]))
+			if (!ph[i].full && !is_alive(&ph[i]))
 				break;
 			if (ph[i].full)
 			{
@@ -194,9 +213,6 @@ void	finisher_checker(t_philo *ph, int n_philos)
 			i++;
 		}
 	}
-	i = -1;
-	while (++i < n_philos)
-		pthread_join(ph[i].t_ph, NULL);
 }
 
 void	init_all_the_program(t_info *info)
