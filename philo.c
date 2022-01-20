@@ -6,28 +6,11 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:03:57 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 15:17:46 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-/*int	*initialize_forks_array(int n_philo)
-{
-	int	*forks;
-	int	i;
-
-	i = 0;
-	forks = malloc(sizeof(int) * n_philo);
-	if (!forks)
-		return (0);
-	while (i < n_philo)
-	{
-		forks[i] = 0;
-		i++;
-	}
-	return (forks);
-}*/
 
 void	aux_create_info_table(t_info *info, char **argv)
 {
@@ -66,7 +49,6 @@ t_info	*create_info_table(char **argv)
 		info[0].n_eats = 0;
 	rev_info_nbrs(info);
 	info[0].somebody_is_die = 0;
-	//info[0].forks = initialize_forks_array(info[0].n_philo);
 	return (info);
 }
 
@@ -174,7 +156,6 @@ void	join_and_destroy(t_philo *ph, int n_philos)
 	}
 	pthread_mutex_destroy(&ph[0].prg->m_print);
 	free(ph[0].m_f);
-	//free(ph[0].prg->forks);
 	free(ph[0].prg);
 	free(ph);
 }

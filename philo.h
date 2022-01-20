@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:03:04 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 15:14:55 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ typedef struct s_info
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
-	int				n_eats;
-	//int				*forks;
+	unsigned int	n_eats;
 	pthread_mutex_t	m_print;
 }	t_info;
 
@@ -36,7 +35,7 @@ typedef struct s_philo
 {
 	int				n_id;
 	int				full;
-	long int		eat_counts;
+	unsigned int	eat_counts;
 	long int		time_init;
 	long int		time_now;
 	long int		last_eat;
