@@ -6,51 +6,11 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:17:46 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 15:25:50 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	aux_create_info_table(t_info *info, char **argv)
-{
-	int	i;
-
-	i = 1;
-	info[0].n_philo = ft_atoi(argv[i]);
-	i++;
-	info[0].t_die = ft_atoi(argv[i]);
-	i++;
-	info[0].t_eat = ft_atoi(argv[i]);
-	i++;
-	info[0].t_sleep = ft_atoi(argv[i]);
-}
-
-t_info	*create_info_table(char **argv)
-{
-	t_info	*info;
-	int		i;
-
-	i = 1;
-	info = malloc(sizeof(t_info));
-	if (!info)
-		ft_error2();
-	aux_create_info_table(info, argv);
-	if (argv[5])
-	{
-		info[0].n_eats = ft_atoi(argv[5]);
-		if (info[0].n_eats == 0)
-		{
-			free(info);
-			ft_error();
-		}
-	}
-	else
-		info[0].n_eats = 0;
-	rev_info_nbrs(info);
-	info[0].somebody_is_die = 0;
-	return (info);
-}
 
 void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 {
@@ -125,67 +85,6 @@ void	*ph_routine(void *th)
 		to_do_list(ph);
 	}
 	return (NULL);
-}
-
-int	is_alive(t_philo *ph)
-{
-	if (ft_get_time() > ph->last_eat + ph->prg->t_die)
-	{
-		print_actions(ph, "(%lu) Philosopher %d died.\n");
-		ph->prg->somebody_is_die = 1;
-		return (0);
-	}
-	return (1);
-}
-
-void	join_and_destroy(t_philo *ph, int n_philos)
-{
-	int	i;
-
-	i = 0;
-	while (i < n_philos)
-	{
-		pthread_join(ph[i].t_ph, NULL);
-		i++;
-	}
-	i = 0;
-	while (i < n_philos)
-	{
-		pthread_mutex_destroy(&ph[0].m_f[i]);
-		i++;
-	}
-	pthread_mutex_destroy(&ph[0].prg->m_print);
-	free(ph[0].m_f);
-	free(ph[0].prg);
-	free(ph);
-}
-
-void	finisher_checker(t_philo *ph, int n_philos)
-{
-	int	i;
-	int	complete_eats;
-
-	while (!ph->prg->somebody_is_die)
-	{
-		i = 0;
-		complete_eats = 0;
-		while (i < n_philos)
-		{
-			if (!is_alive(&ph[i]))
-				break ;
-			if (ph[i].full)
-			{
-				complete_eats++;
-				if (complete_eats == ph->prg->n_philo)
-				{
-					ph->prg->somebody_is_die = 1;
-					break ;
-				}
-			}
-			i++;
-		}
-	}
-	join_and_destroy(ph, n_philos);
 }
 
 void	init_all_the_program(t_info *info)

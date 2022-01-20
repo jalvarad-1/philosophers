@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:14:55 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 15:29:25 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,17 @@ typedef struct s_philo
 	pthread_t		t_ph;
 }	t_philo;
 
-/*///////////PARSER_UTILS */
+///////////PARSER_UTILS /////////////////////
 int			ft_str_is_numeric(char *str);
 void		rev_info_nbrs(t_info *info);
+t_info		*create_info_table(char **argv);
 
 //////////  ERROR_MANAGEMENT ////////////////
 void		ft_error(void);
 void		ft_error2(void);
 
 ////////   PHILO /////////
-
+void		finisher_checker(t_philo *ph, int n_philos);
 //////// UTILS /////////
 void		ft_putstr_fd(char *s, int fd);
 int			ft_atoi(const char *str);
