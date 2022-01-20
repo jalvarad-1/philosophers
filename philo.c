@@ -6,27 +6,11 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 13:45:43 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 14:47:34 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	rev_info_nbrs(t_info *info)
-{
-	if (info[0].n_philo <= 0 || info[0].t_die <= 0 || \
-		info[0].t_eat <= 0 || info[0].t_sleep <= 0 || \
-		info[0].n_eats < 0)
-	{
-		free(info);
-		ft_error();
-	}
-	if (info[0].n_philo > MAX_PH)
-	{
-		free(info);
-		ft_error();
-	}
-}
 
 int	*initialize_forks_array(int n_philo)
 {
@@ -266,5 +250,4 @@ int	main(int argc, char **argv)
 		info = create_info_table(argv);
 		init_all_the_program(info);
 	}
-	system("leaks philo");
 }

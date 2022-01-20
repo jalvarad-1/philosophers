@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 12:10:25 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 14:46:15 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_philo
 
 /*///////////PARSER_UTILS */
 int			ft_str_is_numeric(char *str);
+void		rev_info_nbrs(t_info *info);
 
 //////////  ERROR_MANAGEMENT ////////////////
 void		ft_error(void);

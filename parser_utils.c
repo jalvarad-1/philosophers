@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/03 17:03:00 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 10:26:11 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 14:45:57 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,20 @@ int	ft_str_is_numeric(char *str)
 		a++;
 	}
 	return (b);
+}
+
+void	rev_info_nbrs(t_info *info)
+{
+	if (info[0].n_philo <= 0 || info[0].t_die <= 0 || \
+		info[0].t_eat <= 0 || info[0].t_sleep <= 0 || \
+		info[0].n_eats < 0)
+	{
+		free(info);
+		ft_error();
+	}
+	if (info[0].n_philo > MAX_PH)
+	{
+		free(info);
+		ft_error();
+	}
 }
