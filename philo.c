@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/16 19:01:11 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 13:45:43 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	rev_info_nbrs(t_info *info)
 {
 	if (info[0].n_philo <= 0 || info[0].t_die <= 0 || \
 		info[0].t_eat <= 0 || info[0].t_sleep <= 0 || \
-		info[0].n_eats < 0 )
+		info[0].n_eats < 0)
 	{
 		free(info);
 		ft_error();
@@ -45,6 +45,20 @@ int	*initialize_forks_array(int n_philo)
 	return (forks);
 }
 
+void	aux_create_info_table(t_info *info, char **argv)
+{
+	int	i;
+
+	i = 1;
+	info[0].n_philo = ft_atoi(argv[i]);
+	i++;
+	info[0].t_die = ft_atoi(argv[i]);
+	i++;
+	info[0].t_eat = ft_atoi(argv[i]);
+	i++;
+	info[0].t_sleep = ft_atoi(argv[i]);
+}
+
 t_info	*create_info_table(char **argv)
 {
 	t_info	*info;
@@ -54,17 +68,10 @@ t_info	*create_info_table(char **argv)
 	info = malloc(sizeof(t_info));
 	if (!info)
 		ft_error2();
-	info[0].n_philo = ft_atoi(argv[i]);
-	i++;
-	info[0].t_die = ft_atoi(argv[i]);
-	i++;
-	info[0].t_eat = ft_atoi(argv[i]);
-	i++;
-	info[0].t_sleep = ft_atoi(argv[i]);
-	i++;
-	if (argv[i])
+	aux_create_info_table(info, argv);
+	if (argv[5])
 	{
-		info[0].n_eats = ft_atoi(argv[i]);
+		info[0].n_eats = ft_atoi(argv[5]);
 		if (info[0].n_eats == 0)
 		{
 			free(info);
@@ -78,12 +85,6 @@ t_info	*create_info_table(char **argv)
 	info[0].forks = initialize_forks_array(info[0].n_philo);
 	return (info);
 }
-
-/*////3 -- 310 -- 100 -- 100
-T->eat + t->sleep < t die
-Pares T eat > t die /  2
-impare t eat > t_die / 3 
-*/
 
 void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 {
@@ -126,17 +127,14 @@ void	to_do_list(t_philo *ph)
 	pthread_mutex_unlock(ph->l_fork);
 	ph->eat_counts++;
 	if (ph->eat_counts == ph->prg->n_eats)
+	{
+		ph->full = 1;
 		return ;
+	}
 	print_actions(ph, "(%lu) Philosopher %d is sleeping.\n");
 	ft_usleep(ph->prg->t_sleep);
 	print_actions(ph, "(%lu) Philosopher %d is thinking.\n");
 }
-
-/* Dado que hacer una funcion que valorara hilo por hilo si cumple las
-variables mas basicas condicionales del programa (si el n_philos es par o
-impar) es muy ineficiente he creado dos funciones para los 2 posibles casos, y
-en el los condicionales del bucle ya valoro si se puede entrar o no en el bucle
-con la funcion adecuada */
 
 void	*ph_routine(void *th)
 {
@@ -144,21 +142,26 @@ void	*ph_routine(void *th)
 
 	ph = (t_philo *)th;
 	ph->full = 0;
+	if (ph->prg->n_philo == 1)
+	{
+		pthread_mutex_lock(&ph->m_f[0]);
+		printf("(0) Philosopher 1 has taken a fork.\n");
+		ft_usleep(ph->prg->t_die);
+		printf("(%d) Philosopher 1 died.\n", ph->prg->t_die + 1);
+		ph->prg->somebody_is_die = 1;
+		pthread_mutex_unlock(&ph->m_f[0]);
+		return (NULL);
+	}
 	if (ph->n_id % 2)
 		usleep(100);
-	while(!ph->prg->somebody_is_die)
+	while (ph->full == 0 &&!ph->prg->somebody_is_die)
 	{
-		if (ph->prg->n_eats > 0 && ph->prg->n_eats == ph->eat_counts)
-		{
-			ph->full = 1;
-			break ;
-		}
 		to_do_list(ph);
 	}
 	return (NULL);
 }
 
-int		is_alive(t_philo *ph)
+int	is_alive(t_philo *ph)
 {
 	if (ft_get_time() > ph->last_eat + ph->prg->t_die)
 	{
@@ -187,38 +190,43 @@ void	join_and_destroy(t_philo *ph, int n_philos)
 	}
 	pthread_mutex_destroy(&ph[0].prg->m_print);
 	free(ph[0].m_f);
+	free(ph[0].prg->forks);
+	free(ph[0].prg);
+	free(ph);
 }
+
 void	finisher_checker(t_philo *ph, int n_philos)
 {
-	int i;
-	int complete_eats;
+	int	i;
+	int	complete_eats;
 
-	while(!ph->prg->somebody_is_die)
+	while (!ph->prg->somebody_is_die)
 	{
 		i = 0;
 		complete_eats = 0;
-		while(i < n_philos)
+		while (i < n_philos)
 		{
-			if (!ph[i].full && !is_alive(&ph[i]))
-				break;
+			if (!is_alive(&ph[i]))
+				break ;
 			if (ph[i].full)
 			{
 				complete_eats++;
 				if (complete_eats == ph->prg->n_philo)
 				{
 					ph->prg->somebody_is_die = 1;
-					break;
+					break ;
 				}
 			}
 			i++;
 		}
 	}
+	join_and_destroy(ph, n_philos);
 }
 
 void	init_all_the_program(t_info *info)
 {
-	t_philo 		*thinkers;
-	pthread_mutex_t *m_forks;
+	t_philo			*thinkers;
+	pthread_mutex_t	*m_forks;
 	int				i;
 	long int		init;
 
@@ -239,10 +247,10 @@ void	init_all_the_program(t_info *info)
 	finisher_checker(thinkers, info->n_philo);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_info *info;
-	int i;
+	t_info	*info;
+	int		i;
 
 	i = 1;
 	if (argc != 5 && argc != 6)
@@ -258,4 +266,5 @@ int main(int argc, char **argv)
 		info = create_info_table(argv);
 		init_all_the_program(info);
 	}
+	system("leaks philo");
 }

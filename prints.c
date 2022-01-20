@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/03 16:51:28 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/16 18:20:35 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 13:26:40 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	print_actions(t_philo *ph, char *action)
 {
-	long	int	now;
-	
+	long int	now;
+
 	pthread_mutex_lock(&ph->prg->m_print);
 	now = ft_get_time() - ph->time_init;
 	if (!ph->prg->somebody_is_die)

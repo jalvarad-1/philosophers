@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:39 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/16 18:22:02 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/20 11:25:23 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,20 +55,19 @@ int	ft_atoi(const char *str)
 	return (num * sg);
 }
 
-/*Devuelve el tiempo en milisegundos*/
 long int	ft_get_time(void)
 {
-	struct timeval tp;
+	struct timeval	tp;
 
 	if (gettimeofday(&tp, NULL) == -1)
 		ft_error2();
-	return((tp.tv_sec * 1000) + tp.tv_usec / 1000);
+	return ((tp.tv_sec * 1000) + tp.tv_usec / 1000);
 }
 
-void ft_usleep(long int max_time)
+void	ft_usleep(long int max_time)
 {
 	long int	init_time;
-	
+
 	init_time = ft_get_time();
 	while ((ft_get_time() - init_time) < max_time)
 		usleep(100);
