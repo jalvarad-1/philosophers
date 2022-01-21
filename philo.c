@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:25:50 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/21 12:29:30 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,16 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 	i++;
 	while (i < info->n_philo)
 	{
-		thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 2];
-		thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 1];
+		if (thinkers[i].n_id % 2)
+		{
+			thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 2];
+			thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 1];
+		}
+		if (!(thinkers[i].n_id % 2))
+		{
+			thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 2];
+			thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 1];
+		}
 		thinkers[i].prg = info;
 		i++;
 	}
