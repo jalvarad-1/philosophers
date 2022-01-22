@@ -12,7 +12,7 @@
 
 NAME	= philo
 
-CFLAGS	= -Wall -Werror -Wextra -g -Ofast
+CFLAGS	= -Wall -Wextra
 
 SRCS	= philo.c \
 			utils.c \

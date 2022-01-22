@@ -27,6 +27,7 @@ typedef struct s_info
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
+	int				open;
 	unsigned int	n_eats;
 	pthread_mutex_t	m_print;
 }	t_info;
@@ -35,6 +36,7 @@ typedef struct s_philo
 {
 	int				n_id;
 	int				full;
+	int				yes;
 	unsigned int	eat_counts;
 	long int		time_init;
 	long int		time_now;

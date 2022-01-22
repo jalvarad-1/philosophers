@@ -29,6 +29,7 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 	thinkers[i].r_fork = &m_forks[i];
 	thinkers[i].prg = info;
 	thinkers[i].eat_counts = 0;
+	thinkers[i].yes = 0;
 	i++;
 	while (i < info->n_philo)
 	{
@@ -43,6 +44,8 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 			thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 1];
 		}
 		thinkers[i].prg = info;
+		thinkers[i].eat_counts = 0;
+		thinkers[i].yes = 0;
 		i++;
 	}
 	pthread_mutex_init(&info->m_print, NULL);
@@ -54,6 +57,7 @@ void	to_do_list(t_philo *ph)
 	print_actions(ph, "(%lu) Philosopher %d has taken a fork.\n");
 	pthread_mutex_lock(ph->l_fork);
 	print_actions(ph, "(%lu) Philosopher %d has taken a fork.\n");
+	ph->yes = 1;
 	print_actions(ph, "(%lu) Philosopher %d is eating.\n");
 	ph->last_eat = ft_get_time();
 	ft_usleep(ph->prg->t_eat);
@@ -86,8 +90,8 @@ void	*ph_routine(void *th)
 		pthread_mutex_unlock(&ph->m_f[0]);
 		return (NULL);
 	}
-	if (ph->n_id % 2)
-		usleep(100);
+	while (ph->n_id % 2 && !ph->prg->open)
+		;
 	while (ph->full == 0 &&!ph->prg->somebody_is_die)
 	{
 		to_do_list(ph);
@@ -95,20 +99,48 @@ void	*ph_routine(void *th)
 	return (NULL);
 }
 
+void	*init_check(void *th)
+{
+	t_philo	*ph;
+	int i;
+
+	ph = (t_philo *)th;
+	ph->prg->open = 0;
+	// esta función se va a encargar de revisar que en el primer turno de comida todos los filosofos esten comiendo
+	while (!ph->prg->open)
+	{
+		i = 1;
+		while (i < ph->prg->n_philo)
+		{
+			if (!ph[i].yes)
+				break ;
+			if (i == ph->prg->n_philo - 1)
+			{
+				ph->prg->open = 1;
+				printf("holoa \n");
+			}
+			i += 2;
+		}
+	}
+	return (NULL);
+}
+
 void	init_all_the_program(t_info *info)
 {
 	t_philo			*thinkers;
+	pthread_t		det;
 	pthread_mutex_t	*m_forks;
 	int				i;
 	long int		init;
 
-	thinkers = malloc(sizeof(t_philo) * info->n_philo);
+	thinkers = malloc(sizeof(t_philo) * info->n_philo );
 	m_forks = malloc(sizeof(pthread_mutex_t) * info->n_philo);
 	if (!thinkers || !m_forks)
 		ft_error2();
 	init_m_forks(info, thinkers, m_forks);
 	i = 0;
 	init = ft_get_time();
+	pthread_create(&det, NULL, init_check, thinkers);
 	while (i < info->n_philo)
 	{
 		thinkers[i].time_init = init;
