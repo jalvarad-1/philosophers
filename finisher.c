@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/20 15:25:16 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:26:32 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/24 14:46:52 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	is_alive(t_philo *ph)
 	return (1);
 }
 
-static void	join_and_destroy(t_philo *ph, int n_philos)
+static void	join_and_destroy(pthread_t det, t_philo *ph, int n_philos)
 {
 	int	i;
 
@@ -33,6 +33,7 @@ static void	join_and_destroy(t_philo *ph, int n_philos)
 		pthread_join(ph[i].t_ph, NULL);
 		i++;
 	}
+	pthread_join(det, NULL);
 	i = 0;
 	while (i < n_philos)
 	{
@@ -45,7 +46,7 @@ static void	join_and_destroy(t_philo *ph, int n_philos)
 	free(ph);
 }
 
-void	finisher_checker(t_philo *ph, int n_philos)
+void	finisher_checker(pthread_t det, t_philo *ph, int n_philos)
 {
 	int	i;
 	int	complete_eats;
@@ -70,5 +71,5 @@ void	finisher_checker(t_philo *ph, int n_philos)
 			i++;
 		}
 	}
-	join_and_destroy(ph, n_philos);
+	join_and_destroy(det, ph, n_philos);
 }

@@ -6,7 +6,7 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/26 12:26:18 by jalvarad          #+#    #+#              #
-#    Updated: 2022/01/24 10:57:07 by jalvarad         ###   ########.fr        #
+#    Updated: 2022/01/24 14:56:30 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRCS	= philo.c \
 			utils.c \
 			error_management.c \
 			parser.c \
-			prints.c \
+			print_and_others.c \
 			finisher.c
 
 OBJS	= $(SRCS:.c=.o)

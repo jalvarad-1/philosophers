@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/20 15:29:25 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/24 14:56:08 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,9 @@ void		ft_error(void);
 void		ft_error2(void);
 
 ////////   PHILO /////////
-void		finisher_checker(t_philo *ph, int n_philos);
+void		finisher_checker(pthread_t det, t_philo *ph, int n_philos);
+void		*init_check(void *th);
+void		aux_init(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks);
 //////// UTILS /////////
 void		ft_putstr_fd(char *s, int fd);
 int			ft_atoi(const char *str);

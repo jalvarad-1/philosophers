@@ -6,13 +6,13 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/24 13:52:22 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/24 15:05:31 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
+static void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_f)
 {
 	int	i;
 
@@ -20,40 +20,17 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 	while (i < info->n_philo)
 	{
 		thinkers[i].n_id = i + 1;
-		thinkers[i].m_f = m_forks;
-		pthread_mutex_init(&m_forks[i], NULL);
+		thinkers[i].m_f = m_f;
+		pthread_mutex_init(&m_f[i], NULL);
 		i++;
 	}
 	i = 0;
-	thinkers[i].l_fork = &m_forks[info->n_philo - 1];
-	thinkers[i].r_fork = &m_forks[i];
+	thinkers[i].l_fork = &m_f[info->n_philo - 1];
+	thinkers[i].r_fork = &m_f[i];
 	thinkers[i].prg = info;
 	thinkers[i].eat_counts = 0;
 	thinkers[i].yes = 0;
-	i++;
-	while (i < info->n_philo)
-	{
-		if (thinkers[i].n_id % 2)
-		{
-			thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 2];
-			thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 1];
-		}
-		if (!(thinkers[i].n_id % 2))
-		{
-			thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 2];
-			thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 1];
-		}
-		thinkers[i].prg = info;
-		thinkers[i].eat_counts = 0;
-		thinkers[i].yes = 0;
-		i++;
-		/*thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 2];
-		thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 1];
-		thinkers[i].prg = info;
-		thinkers[i].eat_counts = 0;
-		thinkers[i].yes = 0;
-		i++;*/
-	}
+	aux_init(info, thinkers, m_f);
 	pthread_mutex_init(&info->m_print, NULL);
 }
 
@@ -103,33 +80,7 @@ void	*ph_routine(void *th)
 	if (ph->prg->n_philo % 2 && ph->n_id == ph->prg->n_philo - 1)
 		usleep(100);
 	while (ph->full == 0 &&!ph->prg->somebody_is_die)
-	{
 		to_do_list(ph);
-	}
-	return (NULL);
-}
-
-void	*init_check(void *th)
-{
-	t_philo	*ph;
-	int i;
-
-	ph = (t_philo *)th;
-	ph->prg->open = 0;
-	while (!ph->prg->open)
-	{
-		i = 1;
-		while (i < ph->prg->n_philo)
-		{
-			if (!ph[i].yes)
-				break ;
-			if ( i == ph->prg->n_philo - 1 || i == ph->prg->n_philo - 2)
-			{
-				ph->prg->open = 1;
-			}
-			i += 2;
-		}
-	}
 	return (NULL);
 }
 
@@ -141,7 +92,7 @@ void	init_all_the_program(t_info *info)
 	int				i;
 	long int		init;
 
-	thinkers = malloc(sizeof(t_philo) * info->n_philo );
+	thinkers = malloc(sizeof(t_philo) * info->n_philo);
 	m_forks = malloc(sizeof(pthread_mutex_t) * info->n_philo);
 	if (!thinkers || !m_forks)
 		ft_error2();
@@ -156,7 +107,7 @@ void	init_all_the_program(t_info *info)
 		pthread_create(&thinkers[i].t_ph, NULL, ph_routine, &thinkers[i]);
 		i++;
 	}
-	finisher_checker(thinkers, info->n_philo);
+	finisher_checker(det, thinkers, info->n_philo);
 }
 
 int	main(int argc, char **argv)
