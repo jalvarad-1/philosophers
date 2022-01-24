@@ -117,7 +117,6 @@ void	*init_check(void *th)
 			if (i == ph->prg->n_philo - 1)
 			{
 				ph->prg->open = 1;
-				printf("holoa \n");
 			}
 			i += 2;
 		}

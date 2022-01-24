@@ -61,7 +61,7 @@ long int	ft_get_time(void)
 
 	if (gettimeofday(&tp, NULL) == -1)
 		ft_error2();
-	return ((tp.tv_sec * 1000) + tp.tv_usec / 1000);
+	return ((tp.tv_sec * 1000) + (tp.tv_usec / 1000));
 }
 
 void	ft_usleep(long int max_time)
