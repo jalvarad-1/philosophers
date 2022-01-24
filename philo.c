@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/21 12:29:30 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/24 13:52:22 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,12 @@ void	init_m_forks(t_info *info, t_philo *thinkers, pthread_mutex_t *m_forks)
 		thinkers[i].eat_counts = 0;
 		thinkers[i].yes = 0;
 		i++;
+		/*thinkers[i].l_fork = &m_forks[thinkers[i].n_id - 2];
+		thinkers[i].r_fork = &m_forks[thinkers[i].n_id - 1];
+		thinkers[i].prg = info;
+		thinkers[i].eat_counts = 0;
+		thinkers[i].yes = 0;
+		i++;*/
 	}
 	pthread_mutex_init(&info->m_print, NULL);
 }
@@ -72,6 +78,8 @@ void	to_do_list(t_philo *ph)
 	print_actions(ph, "(%lu) Philosopher %d is sleeping.\n");
 	ft_usleep(ph->prg->t_sleep);
 	print_actions(ph, "(%lu) Philosopher %d is thinking.\n");
+	if (ph->prg->n_philo % 2)
+		usleep(100);
 }
 
 void	*ph_routine(void *th)
@@ -91,7 +99,9 @@ void	*ph_routine(void *th)
 		return (NULL);
 	}
 	while (ph->n_id % 2 && !ph->prg->open)
-		;
+		usleep(100);
+	if (ph->prg->n_philo % 2 && ph->n_id == ph->prg->n_philo - 1)
+		usleep(100);
 	while (ph->full == 0 &&!ph->prg->somebody_is_die)
 	{
 		to_do_list(ph);
@@ -106,7 +116,6 @@ void	*init_check(void *th)
 
 	ph = (t_philo *)th;
 	ph->prg->open = 0;
-	// esta función se va a encargar de revisar que en el primer turno de comida todos los filosofos esten comiendo
 	while (!ph->prg->open)
 	{
 		i = 1;
@@ -114,7 +123,7 @@ void	*init_check(void *th)
 		{
 			if (!ph[i].yes)
 				break ;
-			if (i == ph->prg->n_philo - 1)
+			if ( i == ph->prg->n_philo - 1 || i == ph->prg->n_philo - 2)
 			{
 				ph->prg->open = 1;
 			}

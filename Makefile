@@ -6,13 +6,13 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/26 12:26:18 by jalvarad          #+#    #+#              #
-#    Updated: 2022/01/20 15:27:33 by jalvarad         ###   ########.fr        #
+#    Updated: 2022/01/24 10:57:07 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= philo
 
-CFLAGS	= -Wall -Wextra
+CFLAGS	= -Wall -Wextra -Werror
 
 SRCS	= philo.c \
 			utils.c \
