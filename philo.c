@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:21 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/24 15:05:31 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/01/28 09:33:49 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ void	init_all_the_program(t_info *info)
 	init_m_forks(info, thinkers, m_forks);
 	i = 0;
 	init = ft_get_time();
-	pthread_create(&det, NULL, init_check, thinkers);
+	if (info->n_philo < 1)
+		pthread_create(&det, NULL, init_check, thinkers);
 	while (i < info->n_philo)
 	{
 		thinkers[i].time_init = init;
@@ -129,4 +130,5 @@ int	main(int argc, char **argv)
 		info = create_info_table(argv);
 		init_all_the_program(info);
 	}
+	system("leaks philo");
 }
