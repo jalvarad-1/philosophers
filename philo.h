@@ -6,7 +6,7 @@
 /*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/26 12:26:25 by jalvarad          #+#    #+#             */
-/*   Updated: 2022/01/24 14:56:08 by jalvarad         ###   ########.fr       */
+/*   Updated: 2022/02/12 10:21:55 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,26 @@
 # include <sys/time.h>
 # include <stdlib.h>
 # include <limits.h>
+# include <stdbool.h>
 # define MAX_PH 200
 
 typedef struct s_info
 {
-	int				n_philo;
-	int				somebody_is_die;
+	short int		n_philo;
+	bool			somebody_is_die;
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
-	int				open;
+	bool			open;
 	unsigned int	n_eats;
 	pthread_mutex_t	m_print;
 }	t_info;
 
 typedef struct s_philo
 {
-	int				n_id;
-	int				full;
-	int				yes;
+	short int		n_id;
+	bool		full;
+	bool		yes;
 	unsigned int	eat_counts;
 	long int		time_init;
 	long int		time_now;
